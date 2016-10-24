@@ -27,19 +27,9 @@
 /* global jQuery */
 
 angular.module('angular-flot', []).directive('flot', ['$timeout', function ($timeout) {
-  return {
-    restrict: 'EA',
-    template: '<div></div>',
-    scope: {
-      dataset: '=',
-      options: '=',
-      callback: '=',
-      onPlotClick: '&',
-      onPlotHover: '&',
-      onPlotSelected: '&'
-    },
-    link: function (scope, element, attributes) {
-      var plot = null;
+
+  var onLink = function (scope, element, attributes) {
+    var plot = null;
       var width = attributes.width || '100%';
       var height = attributes.height || '100%';
 
@@ -159,6 +149,26 @@ angular.module('angular-flot', []).directive('flot', ['$timeout', function ($tim
         unwatchDataset();
         unwatchOptions();
       });
+  }
+
+  return {
+    restrict: 'EA',
+    template: '<div></div>',
+    scope: {
+      dataset: '=',
+      options: '=',
+      callback: '=',
+      onPlotClick: '&',
+      onPlotHover: '&',
+      onPlotSelected: '&'
+    },
+    link: function (scope, element, attributes) {
+       var interval = setInterval(function() {
+        if ($(element).is(':visible')) {
+          clearInterval(interval);
+          onLink(scope, element, attributes);
+        }
+      }, 50);
     }
   };
 }]);
